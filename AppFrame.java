@@ -8,6 +8,8 @@ package appframe;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -50,6 +52,18 @@ public class AppFrame extends JFrame{
         uleczSie = new JButton("Ulecz sie");
         zakoncz = new JButton("Zakoncz gre bohaterem");
         
+        /**Stworzylem klase Zegar ktora implementuje interfejs ActionListner dlatego moge podac go do Klasy Timer ktora przyjmuje delay oraz ActionListner
+         * 
+         */
+        czasLabel = new JLabel("00:00:00");
+        ActionListener zegar = new Zegar();
+        Timer stoper = new Timer(1000, zegar);
+        stoper.start();
+        
+        
+        /**Klasa anonimowa (bez nazwy, pozawala wykonac mi 1 metode ktora zamyka w tym wypadku program
+         * 
+         */
         zakoncz.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,6 +75,7 @@ public class AppFrame extends JFrame{
         JButton tak = ButtonCreate("TAK");
         JButton nie = ButtonCreate("NIE");
         JButton moze = ButtonCreate("Może");
+        wybor = new JLabel("Hero says: ");
         
         
         //LAYOUT GRUOP
@@ -70,7 +85,12 @@ public class AppFrame extends JFrame{
         
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
-                .addComponent(atakuj,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,300)
+                        .addContainerGap(10, 10)
+                        .addGroup(layout.createParallelGroup()
+                        .addComponent(czasLabel,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE)
+                        .addComponent(atakuj,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,300)       
+                        )
+                        
                 .addGroup(
                 layout.createParallelGroup()
                         .addComponent(zmienPrzeciwnika,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,300)
@@ -82,8 +102,13 @@ public class AppFrame extends JFrame{
                     .addComponent(nie)
                     .addComponent(moze)
                 )
-                .addContainerGap(10,Short.MAX_VALUE)   
-                .addComponent(zakoncz,10,GroupLayout.DEFAULT_SIZE,200)
+                .addContainerGap(10, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(zakoncz,10,GroupLayout.DEFAULT_SIZE,200)
+                        .addComponent(wybor)
+                )
+                        
+                
         
         );
         layout.setVerticalGroup(
@@ -92,6 +117,7 @@ public class AppFrame extends JFrame{
                      .addComponent(atakuj)
                      .addComponent(zmienPrzeciwnika)
                      .addComponent(tak)
+                     .addComponent(wybor)
                 )
                 .addGroup(layout.createParallelGroup()
                 
@@ -99,9 +125,13 @@ public class AppFrame extends JFrame{
                 .addComponent(nie)
                 )
                 .addComponent(moze)
-                .addContainerGap(10,Short.MAX_VALUE)
-                
-                .addComponent(zakoncz,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE, 100)
+//                    
+                .addContainerGap(10, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup()
+                .addGap(10)
+                        .addComponent(czasLabel,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE)
+                        .addComponent(zakoncz,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE, 100)
+                )
         );
         
         
@@ -112,17 +142,45 @@ public class AppFrame extends JFrame{
     JButton zmienPrzeciwnika;
     JButton uleczSie;
     JButton zakoncz;
+    JLabel wybor;
+    JLabel czasLabel;
+    
     GroupLayout layout = new GroupLayout(getContentPane());
     
- 
+    
+    /**
+     * Klasa ktora implementuje actionListnera, instrukcje w nim sa wykonywane co sekunde (patrz na TIMER)
+     */
+    
+    class Zegar implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            GregorianCalendar kal = new GregorianCalendar();
+            String sec = ""+kal.get(Calendar.SECOND);
+            String h = ""+kal.get(Calendar.HOUR_OF_DAY);
+            String min = ""+kal.get(Calendar.MINUTE);
+            
+            if (Integer.parseInt(h)<10)
+                h = "0"+h;
+            if (Integer.parseInt(min)<10)
+                min = "0"+min;
+            if (Integer.parseInt(sec)<10)
+                sec = "0"+sec;
+            
+            czasLabel.setText("Time: "+h+":"+min+":"+sec);
+            
+        }
+        
+    }
     
     private JButton ButtonCreate(String name){
-            Color k= Color.BLUE;
             JButton button = new JButton(name);
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println(e.getActionCommand());
+                    wybor.setText("Hero says: "+System.lineSeparator()+e.getActionCommand()); 
+                    
                 }
             });
         
